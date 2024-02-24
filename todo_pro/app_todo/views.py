@@ -36,3 +36,8 @@ def updateNote(request,pk):
                   return JsonResponse(serializer.data,status=200)
              return JsonResponse(serializer.errors,status=404)
         
+        elif request.method =='DELETE':
+             obj1.delete()
+             return JsonResponse(status=200)
+        
+        

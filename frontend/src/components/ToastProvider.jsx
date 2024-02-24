@@ -1,10 +1,10 @@
 import React from 'react'
-import {ToastBar, Toaster} from 'react-hot-toast'
+import {Toaster} from 'react-hot-toast'
 
 const ToastProvider = () => {
   return (
     <div>
-        <ToastBar/>
+        <Toaster/>
     </div>
   )
 }

@@ -14,6 +14,7 @@ def index(request):
         return JsonResponse(serializer.data, status=200,safe=False)
     elif request.method =="POST":
         val1 = JSONParser().parse(request)
+        print("value we are getting from frontend : ", val1)
         serializer = NoteModelSerializer(data=val1)
         if serializer.is_valid():
             serializer.save()

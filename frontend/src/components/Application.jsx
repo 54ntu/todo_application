@@ -36,6 +36,7 @@ const Application = () => {
 
  useEffect(()=>{
   getData();
+
  },[])
 
 
@@ -43,16 +44,25 @@ const Application = () => {
   //todo add section starts here 
 
   const addNote =async (values)=>{
-    console.log("values we are getting : ", values)
-    const response = await axios.post('http://127.0.0.1:8000/api/home',values)
-    if (response.status ==200){
-      toast.success('note added successfully');
+    try{
 
+      console.log("values we are getting : ", values)
+      const response = await axios.post('http://127.0.0.1:8000/api/home',values)
+      if (response.status ==200){
+        toast.success('note added successfully');
+        //update formdata state with the newly added todos
+        setFormdata([...formData,response.data]); // here we are assuming that response.data contains newly added todos
+  
+      }
+      else{
+        toast.error('something went wrong');
+      }
+    }catch(error){
+      console.error('error adding todos : ',error);
+      toast.error('  something went wrong');
     }
-    else{
-      toast.error('something went wrong');
     }
-  }
+    
 
   // todo add section ends here
 
@@ -94,9 +104,7 @@ const Application = () => {
 
                         </div>
       
-                      </div>
-                    
-
+                      </div>       
                 );
               })
             }

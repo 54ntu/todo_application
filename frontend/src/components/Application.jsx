@@ -2,6 +2,9 @@ import React, {useState,useEffect}  from 'react'
 import {useForm} from 'react-hook-form'
 import {toast} from 'react-hot-toast'
 import axios from 'axios'
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
+
 
 const Application = () => {
 
@@ -43,11 +46,11 @@ const Application = () => {
   //todo add section starts here 
 
   const addNote =async (values)=>{
-    
+    console.log(values)
    
     try{
         if(!editTodo){
-           const response = await axios.post('http://127.0.0.1:8000/api/home',values)
+           const response = await axios.post('http://127.0.0.1:8000/api/home',{ notedetail:values.notedetail, is_completed:values.is_completed})
             if (response.status ==200){
               toast.success('todo added successfully');
               //update formdata state with the newly added todos
@@ -109,6 +112,26 @@ const handleEdit= (todo)=>{
   
 }
 
+
+//function for checkbox toggling
+const handelToggleChange = async(id, isCompleted, tododetail)=>{
+  try{
+    const response = await axios.put(`http://127.0.0.1:8000/api/update/${id}`,{notedetail:tododetail, is_completed: !isCompleted});
+    if (response.status ===200){
+      setFormdata(formData.map(todo=>todo.id ==id ?{...todo,is_completed :!isCompleted}: todo));
+      toast.success('status changed')
+    }else{
+      toast.error('error on status updation');
+    }
+
+  }catch(error){
+    console.log('something went wrong', error);
+    toast.error('something went wrong');
+  }
+}
+
+
+
   return (
     <div className='container mx-auto my-6 rounded-xl p-5 bg-violet-100  min-h-[70vh] w-1/4'>
         {/* todo add section starts here  */}
@@ -130,15 +153,24 @@ const handleEdit= (todo)=>{
 
             {
               formData?.map((todo,index)=>{
+                
                 return(
                     
                       <div className='todos flex justify-between' key={index} >
                         
-                                <div><input type='checkbox' ></input></div>
-                                <div className='todotext line-through mb-3' > {todo?.notedetail}</div>
+                        <div className='flex gap-8'>
+                          
+                                <div>
+                                  <input type='checkbox' checked={todo.is_completed}  onChange={()=>handelToggleChange(todo.id,todo.is_completed, todo.notedetail)}  ></input>
+                                
+                                </div>
+                                <div className={`todotext mb-3 ${todo.is_completed ? 'line-through':''}`} > {todo?.notedetail}</div>
+
+                        </div>
+                        
                                 <div className='button'>
-                                  <button className='bg-violet-800 text-white  text-sm p-2 py-1 rounded-md ' onClick={()=>handleEdit(todo)} >Edit</button>
-                                  <button className='bg-violet-800 text-white text-sm p-2 py-1 mx-1 rounded-md ' type='submit'onClick={()=>deleteNote(todo.id)} > delete</button>
+                                  <button className='bg-violet-800 text-white  text-sm p-2 py-1 rounded-md ' onClick={()=>handleEdit(todo)} ><FaRegEdit /></button>
+                                  <button className='bg-violet-800 text-white text-sm p-2 py-1 mx-1 rounded-md ' type='submit'onClick={()=>deleteNote(todo.id)} > <MdDeleteForever /></button>
                                 </div>
                       </div> 
                                

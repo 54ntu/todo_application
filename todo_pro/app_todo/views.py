@@ -23,21 +23,25 @@ def index(request):
     
 @csrf_exempt
 def updateNote(request,pk):
-        obj1= NoteModel.objects.get(id=pk)
+        try:
+          queryset= NoteModel.objects.get(id=pk)
+        except NoteModel.DoesNotExist:
+             return HttpResponse('data not found')
+        
         if request.method =="GET":
-             serializer = NoteModelSerializer(obj1)
-             return JsonResponse(serializer.data)
+            serializer = NoteModelSerializer(queryset)
+            return JsonResponse(serializer.data)
         
         elif request.method =="PUT":
              val1 = JSONParser().parse(request)
-             serializer = NoteModelSerializer(obj1,data=val1)
+             serializer = NoteModelSerializer(queryset,data=val1)
              if serializer.is_valid():
                   serializer.save()
                   return JsonResponse(serializer.data,status=200)
              return JsonResponse(serializer.errors,status=404)
         
-        elif request.method =='DELETE':
-             obj1.delete()
-             return JsonResponse(status=200)
+        elif request.method == 'DELETE':
+             queryset.delete()
+             return HttpResponse('data deleted successfully')
         
         
